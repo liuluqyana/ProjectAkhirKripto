@@ -398,6 +398,34 @@
     });
   }
 
+  // ---------- Auto-Lock / Heartbeat Pemantau Sesi (Hanya aktif di Dashboard) ----------
+function initAutoLock() {
+    setInterval(async () => {
+      const currentPage = document.body.dataset.page;
+      // Jangan jalankan saat masih di halaman login atau verifikasi
+      if (['login', 'face-verify', 'face-enroll', 'dongle'].includes(currentPage)) {
+        return; 
+      }
+
+      try {
+        const res = await fetch('/api/auth/heartbeat', {
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: { 'X-CSRF-Token': csrf() }
+        });
+
+        // Jika server menolak karena flash disk dicabut / sesi terputus
+        if (!res.ok) {
+          alert("Peringatan: Flash disk dongle dicabut! Sistem dikunci demi keamanan.");
+          window.location.href = '/login';
+        }
+      } catch (err) {
+        console.error('Koneksi terputus:', err);
+      }
+    }, 3000); // Cek setiap 3 detik agar responsif saat dicabut
+  }
+  initAutoLock();
+
   const inits = { login: initLogin, 'face-verify': () => initFace('verify'), 'face-enroll': () => initFace('enroll'), dongle: initDongle, dashboard: initDashboard, text: initText, files: initFiles, stego: initStego, chain: initChain };
   if (inits[page]) inits[page]();
 })();

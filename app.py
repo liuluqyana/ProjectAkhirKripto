@@ -96,6 +96,22 @@ def security_headers(resp):
         resp.headers["Cache-Control"] = "no-store"
     return resp
 
+@app.get("/api/auth/heartbeat")
+@auth.login_required
+def api_auth_heartbeat():
+    user_id = session.get("uid")
+    db = database.get_db()
+    user = database.get_user(db, user_id)
+    
+    if not user:
+        return jsonify(ok=False, error="Sesi berakhir."), 401
+
+    ok_dongle, pesan, lokasi = dongle.cek()
+    if not ok_dongle:
+        session.clear()  # Hapus sesi agar langsung tertendang
+        return jsonify(ok=False, error=pesan), 401
+        
+    return jsonify(ok=True, username=user["username"], role=user["role"])
 
 def handle_known(exc):
     return fail(str(exc), 400)
@@ -246,8 +262,6 @@ def api_face_verify():
     session["face_ok"] = True
     return jsonify(ok=True, redirect=url_for("verify_dongle_page"))
 
-
-
 @app.post("/api/login/password")
 def api_login_password():
     data = request.get_json(silent=True) or {}
@@ -330,6 +344,9 @@ def api_dongle_verify():
     if not dongle.verify_response(database.get_dongle_secret(user), challenge, user["username"], response):
         auth.register_failure(db, user)
         return fail("Respons dongle tidak valid.", 401)
+    
+    session["dongle_device_bound"] = user["username"]
+    
     if database.get_face_template(db, user["id"]):
         if not session.get("face_ok"):
             return fail("Verifikasi wajah wajib dilakukan sebelum dongle.", 403)
