@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Masuk · Secure Exam Vault{% endblock %}
+{% block page %}login{% endblock %}
+{% block content %}
+<div class="auth-layout">
+  <aside class="auth-story">
+    <div class="eyebrow">SECURE EXAM DISTRIBUTION</div>
+    <img class="story-logo" src="{{ url_for('static', filename='img/logo_upn.png') }}" alt="Logo UPN">
+    <h1>Keamanan soal ujian, dari pusat hingga ruang pengawas.</h1>
+    <p>Ruang kerja distribusi soal dengan super enkripsi, pengamanan file, steganografi, dan catatan integritas blockchain.</p>
+    <div class="story-features"><span>01 &nbsp; Identitas</span><span>02 &nbsp; Biometrik</span><span>03 &nbsp; Dongle</span></div>
+  </aside>
+  <section class="auth-panel">
+    <div class="auth-kicker">TAHAP 1 DARI 3</div>
+    <h2>Selamat datang kembali</h2>
+    <p class="muted">Masuk menggunakan akun Pusat atau Pengawas.</p>
+    <div id="login-error" class="alert alert-error hidden" role="alert"></div>
+    <form id="form-password">
+      <label for="username">Username</label><input id="username" type="text" autocomplete="username" maxlength="64" required placeholder="Masukkan username">
+      <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" maxlength="256" required placeholder="Masukkan password">
+      <button class="btn auth-submit" type="submit">Lanjut verifikasi <span aria-hidden="true">→</span></button>
+    </form>
+    <div class="auth-tip">Akun ditetapkan oleh Pusat. Tidak tersedia pendaftaran akun publik.</div>
+  </section>
+</div>
+{% endblock %}

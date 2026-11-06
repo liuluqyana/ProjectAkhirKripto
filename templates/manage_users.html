@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Manajemen Pengawas · Secure Exam Vault{% endblock %}
+{% block content %}
+<div class="page-head"><h1>Manajemen Pengawas</h1><p>Hanya Pusat yang dapat menambahkan akun pengawas. Tidak ada registrasi publik.</p></div>
+<div class="grid grid-2">
+ <section class="card accent"><h2>Tambah Pengawas</h2><form method="post" action="{{ url_for('tambah_pengawas') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><label for="username-new">Username</label><input id="username-new" type="text" name="username" minlength="3" maxlength="32" pattern="[a-z0-9_.-]+" required><label for="name-new">Nama lengkap</label><input id="name-new" type="text" name="name" minlength="3" maxlength="100" required><label for="pw-new">Password awal</label><input id="pw-new" type="password" name="password" minlength="10" required><p class="hint">Minimal 10 karakter, termasuk huruf besar, kecil, dan angka. Pengawas wajib menggantinya saat aktivasi wajah pertama.</p><button class="btn" type="submit">Buat akun Pengawas</button></form></section>
+ <section class="card"><h2>Daftar akun</h2><div class="table-wrap"><table><thead><tr><th>Username</th><th>Role</th><th>Dibuat</th></tr></thead><tbody>{% for u in users %}<tr><td>{{ u.username }}</td><td>{{ u.role | capitalize }}</td><td><time data-utc="{{ u.created_at }}">{{ u.created_at }}</time></td></tr>{% endfor %}</tbody></table></div><p class="hint">File token dongle demo dibuat di folder instance/demo_dongles dan perlu diserahkan ke pemilik akun secara aman. Jangan kirim token melalui jalur publik.</p></section>
+</div>
+{% endblock %}

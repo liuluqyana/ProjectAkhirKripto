@@ -1,0 +1,7 @@
+{
+  "type": "KGP-DEMO-DONGLE",
+  "version": 1,
+  "username": "pusat",
+  "secret": "328ccd26ed7cd6183a7392f01c8e2c1e2f86cb4aeb951901a9a2964e059b46a8",
+  "note": "Dongle virtual MODE DEMO. Jangan dipakai di produksi."
+}

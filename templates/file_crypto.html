@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Enkripsi File Soal' if current_user.role == 'pusat' else 'Dekripsi File Soal' }}{% endblock %}
+{% block page %}files{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>{{ 'Enkripsi File Soal' if current_user.role == 'pusat' else 'Dekripsi File Soal' }}</h1>
+  <p>Naskah soal PDF/DOCX dienkripsi ChaCha20-Poly1305 dalam format biner berversi <code>KGP2</code> (tetap bisa mendekripsi berkas lama KGP1/AES-GCM).</p>
+</div>
+
+{% if current_user.role == 'pusat' %}
+<section class="card accent">
+  <h2>Rilis paket soal</h2>
+  <p class="muted">Satu langkah: enkripsi naskah dengan token acak, sembunyikan token di gambar Logo UPN (LSB), lalu catat rilis ke blockchain.</p>
+  <form id="form-release">
+    <label for="rel-name">Nama ujian</label>
+    <input id="rel-name" name="exam_name" type="text" required minlength="3" maxlength="120">
+    <label for="rel-file">Naskah soal (PDF atau DOCX, maks. 25 MB)</label>
+    <input id="rel-file" name="exam_file" type="file" accept=".pdf,.docx" required>
+    <div class="row">
+      <div><label for="rel-when">Tersedia untuk pengawas mulai</label><input id="rel-when" type="datetime-local">
+        <p class="hint">Kosongkan untuk langsung tersedia.</p></div>
+      <div><label for="rel-cover">Gambar sampul (opsional)</label><input id="rel-cover" name="cover" type="file" accept="image/png,image/jpeg">
+        <p class="hint">Kosong = Logo UPN bawaan.</p></div>
+    </div>
+    <button class="btn" type="submit">Enkripsi dan rilis paket</button>
+  </form>
+  <div id="rel-error" class="alert alert-error hidden" role="alert"></div>
+  <div id="rel-result" class="output hidden">
+    <h3>Paket berhasil dirilis</h3>
+    <dl class="kv" id="rel-kv"></dl>
+    <a id="rel-dl-enc" class="btn btn-secondary btn-small" href="#">Unduh .kgp</a>
+    <a id="rel-dl-stego" class="btn btn-secondary btn-small" href="#">Unduh Logo UPN (token)</a>
+  </div>
+</section>
+
+<section class="card">
+  <h2>Enkripsi manual KGP2</h2>
+  <form id="form-encrypt">
+    <div class="row">
+      <div><label for="enc-file">Naskah soal (PDF/DOCX)</label><input id="enc-file" name="file" type="file" accept=".pdf,.docx" required></div>
+      <div><label for="enc-pass">Passphrase (min. 8 karakter)</label><input id="enc-pass" name="passphrase" type="password" required minlength="8" autocomplete="new-password"></div>
+    </div>
+    <button class="btn" type="submit">Enkripsi dan unduh .kgp</button>
+  </form>
+  <div id="enc-error" class="alert alert-error hidden" role="alert"></div>
+  <div id="enc-ok" class="alert alert-ok hidden" role="status"></div>
+</section>
+{% endif %}
+
+<section class="card {{ 'accent' if current_user.role == 'pengawas' }}">
+  <h2>Dekripsi paket soal</h2>
+  <p class="muted">Unggah berkas .kgp, lalu berikan token secara langsung atau unggah gambar Logo UPN agar token diekstrak otomatis.</p>
+  <form id="form-decrypt">
+    <label for="dec-kgp">Berkas .kgp</label>
+    <input id="dec-kgp" name="kgp_file" type="file" accept=".kgp" required>
+    <div class="row">
+      <div><label for="dec-stego">Gambar Logo UPN (berisi token)</label><input id="dec-stego" name="stego_image" type="file" accept="image/png"></div>
+      <div><label for="dec-pass">atau token / passphrase</label><input id="dec-pass" name="passphrase" type="password" autocomplete="off"></div>
+    </div>
+    <button class="btn" type="submit">Dekripsi dan unduh naskah</button>
+  </form>
+  <div id="dec-error" class="alert alert-error hidden" role="alert"></div>
+  <div id="dec-ok" class="alert alert-ok hidden" role="status"></div>
+</section>
+
+<section class="card">
+  <h2>Format berkas KGP2</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Offset</th><th>Ukuran</th><th>Isi</th></tr></thead>
+    <tbody>
+      <tr><td>0</td><td>4 byte</td><td>Magic header <code>KGP2</code></td></tr>
+      <tr><td>4</td><td>1 byte</td><td>Versi format (1)</td></tr>
+      <tr><td>5</td><td>4 byte</td><td>Iterasi PBKDF2-HMAC-SHA256 (uint32)</td></tr>
+      <tr><td>9</td><td>16 byte</td><td>Salt acak</td></tr>
+      <tr><td>25</td><td>12 byte</td><td>Nonce ChaCha20-Poly1305</td></tr>
+      <tr><td>37</td><td>sisa</td><td>Ciphertext + tag 16 byte (nama berkas + isi). Header menjadi AAD.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+{% endblock %}

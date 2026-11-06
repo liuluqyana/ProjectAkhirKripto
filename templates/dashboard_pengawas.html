@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Dashboard Pengawas{% endblock %}
+{% block page %}dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Dashboard Pengawas</h1>
+  <p>Unduh paket soal setelah waktu rilis, ambil token dari gambar Logo UPN, lalu kirim berita acara.</p>
+</div>
+
+<section class="card accent">
+  <h2>Paket soal untuk Anda</h2>
+  {% if packages %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Ujian</th><th>Tersedia sejak</th><th>Status</th><th>Berkas paket</th></tr></thead>
+    <tbody>
+    {% for p in packages %}
+      <tr>
+        <td>{{ p.exam_name }}<br><span class="mono muted">{{ p.id }}</span></td>
+        <td><time data-utc="{{ p.available_from }}">{{ p.available_from }}</time></td>
+        <td>{% if p.available %}<span class="badge badge-ok">terbuka</span>{% else %}<span class="badge badge-wait">belum dirilis</span>{% endif %}</td>
+        <td>
+          {% if p.available %}
+            <a class="btn btn-small" href="{{ url_for('package_download', pid=p.id, kind='enc') }}">Soal terenkripsi (.kgp)</a>
+            <a class="btn btn-small btn-secondary" href="{{ url_for('package_download', pid=p.id, kind='stego') }}">Logo UPN (token)</a>
+          {% else %}<span class="muted">Menunggu waktu rilis</span>{% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  <p class="hint">Langkah: unduh kedua berkas, lalu buka <a href="{{ url_for('file_crypto_page') }}">Dekripsi File Soal</a> dan unggah .kgp bersama gambar Logo UPN. Token diekstrak otomatis dari gambar.</p>
+  {% else %}
+  <p class="empty">Belum ada paket soal yang dirilis Pusat.</p>
+  {% endif %}
+</section>
+
+<div class="grid grid-2">
+  <section class="card">
+    <h2>Kirim berita acara</h2>
+    <form method="post" action="{{ url_for('berita_acara_submit') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label for="package_id">Paket ujian</label>
+      <select id="package_id" name="package_id" required>
+        {% for p in packages %}<option value="{{ p.id }}">{{ p.exam_name }} ({{ p.id }})</option>{% endfor %}
+      </select>
+      <label for="ruangan">Ruangan</label>
+      <input id="ruangan" name="ruangan" type="text" maxlength="60" required>
+      <div class="row">
+        <div><label for="hadir">Peserta hadir</label><input id="hadir" name="hadir" type="number" min="0" max="10000" required></div>
+        <div><label for="tidak_hadir">Peserta tidak hadir</label><input id="tidak_hadir" name="tidak_hadir" type="number" min="0" max="10000" required></div>
+      </div>
+      <label for="catatan">Catatan kejadian</label>
+      <textarea id="catatan" name="catatan" maxlength="2000"></textarea>
+      <p class="hint">Isi berita acara disimpan terenkripsi AES-256-GCM di database.</p>
+      <button class="btn" type="submit" {% if not packages %}disabled{% endif %}>Kirim berita acara</button>
+    </form>
+  </section>
+
+  <section class="card">
+    <h2>Berita acara saya</h2>
+    {% if reports %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Waktu</th><th>Ujian / ruang</th><th>Hadir</th><th>Absen</th></tr></thead>
+      <tbody>
+      {% for r in reports %}
+        <tr><td><time data-utc="{{ r.created_at }}">{{ r.created_at }}</time></td>
+        <td>{{ r.exam_name }}<br><span class="muted">{{ r.ruangan }}</span></td><td>{{ r.hadir }}</td><td>{{ r.tidak_hadir }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<p class="empty">Belum ada berita acara yang Anda kirim.</p>{% endif %}
+
+    <h2>Log aktivitas saya</h2>
+    {% if logs %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Waktu</th><th>Aksi</th><th>Detail</th></tr></thead>
+      <tbody>
+      {% for l in logs %}
+        <tr><td><time data-utc="{{ l.created_at }}">{{ l.created_at }}</time></td><td>{{ l.action }}</td><td class="mono">{{ l.detail }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<p class="empty">Belum ada aktivitas.</p>{% endif %}
+  </section>
+</div>
+
+{% include "_security_card.html" %}
+{% endblock %}

@@ -1,0 +1,12 @@
+<section class="card" id="security-card">
+  <h2>Perangkat keamanan akun</h2>
+  {% if webauthn_available %}
+    <p class="muted">Daftarkan sidik jari/Windows Hello atau USB security key (FIDO2) sebagai faktor kedua login.
+      Terdaftar saat ini: <strong>{{ webauthn_count }}</strong> perangkat.</p>
+    <button id="btn-register-webauthn" class="btn btn-secondary" type="button">Daftarkan biometrik / USB key</button>
+    <div id="webauthn-status" class="alert hidden" role="status"></div>
+  {% else %}
+    <p class="muted">WebAuthn tidak aktif (library <code>webauthn</code> belum terpasang atau mode dinonaktifkan).
+      Login memakai dongle virtual mode demo.</p>
+  {% endif %}
+</section>
