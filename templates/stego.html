@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Steganografi Logo UPN{% endblock %}
+{% block page %}stego{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Steganografi Logo UPN</h1>
+  <p>Token dekripsi soal disembunyikan di bit paling tidak signifikan (LSB) piksel gambar, tanpa perubahan yang terlihat.</p>
+</div>
+
+<section class="card">
+  <div class="row">
+    <div><img class="logo-preview" src="{{ url_for('static', filename='img/Logo_UPN_Yogyakarta.png') }}" alt="Logo UPN Veteran Yogyakarta">
+      <dl class="kv">
+        <dt>Gambar sampul bawaan</dt><dd>{{ logo_size }} piksel</dd>
+        <dt>Kapasitas pesan</dt><dd>{{ capacity }} byte</dd>
+        <dt>Format keluaran</dt><dd>PNG (lossless)</dd>
+      </dl>
+      <p class="hint">Jangan kompres ulang atau ubah ke JPG; bit tersembunyi akan rusak. Setiap pesan dilindungi CRC32 untuk mendeteksi kerusakan.</p>
+    </div>
+  </div>
+</section>
+
+<div class="grid grid-2">
+  {% if current_user.role == 'pusat' %}
+  <section class="card accent">
+    <h2>Sisipkan pesan</h2>
+    <form id="form-embed">
+      <label for="emb-msg">Pesan rahasia (token/kunci)</label>
+      <textarea id="emb-msg" name="message" required></textarea>
+      <label for="emb-cover">Gambar sampul (opsional)</label>
+      <input id="emb-cover" name="cover" type="file" accept="image/png,image/jpeg">
+      <p class="hint">Kosong = Logo UPN bawaan.</p>
+      <button class="btn" type="submit">Sisipkan dan unduh PNG</button>
+    </form>
+    <div id="emb-error" class="alert alert-error hidden" role="alert"></div>
+    <div id="emb-result" class="output hidden">
+      <h3>Hasil gambar stego</h3>
+      <img id="emb-preview" class="logo-preview" alt="Pratinjau gambar stego">
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="card accent">
+    <h2>Ekstrak pesan</h2>
+    <form id="form-extract">
+      <label for="ext-image">Gambar stego (PNG)</label>
+      <input id="ext-image" name="image" type="file" accept="image/png" required>
+      <button class="btn" type="submit">Ekstrak pesan</button>
+    </form>
+    <div id="ext-error" class="alert alert-error hidden" role="alert"></div>
+    <div id="ext-result" class="output hidden">
+      <h3>Pesan tersembunyi (<span id="ext-len"></span> byte)</h3>
+      <textarea id="ext-msg" class="mono" readonly></textarea>
+    </div>
+  </section>
+</div>
+{% endblock %}

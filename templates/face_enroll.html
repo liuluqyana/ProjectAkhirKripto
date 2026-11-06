@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Aktivasi Wajah · Secure Exam Vault{% endblock %}
+{% block page %}face-enroll{% endblock %}
+{% block content %}
+<section class="factor-shell"><div class="factor-header"><span class="auth-kicker">AKTIVASI PERTAMA</span><h1>Daftarkan wajah</h1><p class="muted">Dongle untuk <strong>{{ username }}</strong> telah diverifikasi. Rekam 5 frame dengan sedikit variasi posisi wajah, lalu akun akan aktif.</p></div>
+ <div class="camera-card"><video id="face-video" autoplay playsinline muted></video><div class="camera-line"></div></div>
+ <div class="method-card" style="margin:1rem auto;max-width:680px"><h2>Ganti password awal</h2><label for="new-password">Password baru (minimal 10 karakter, huruf besar/kecil, angka)</label><input id="new-password" type="password" autocomplete="new-password" minlength="10" required><p class="hint">Password ini digunakan untuk login berikutnya.</p></div>
+ <div id="factor-error" class="alert alert-error hidden" role="alert"></div>
+ <div id="factor-ok" class="alert alert-ok hidden"></div>
+ <div class="factor-actions"><button class="btn" id="btn-face-enroll" type="button">Daftarkan wajah →</button><a class="btn btn-secondary" href="/login">Batal</a></div>
+ <p class="hint">Template wajah disimpan terenkripsi; foto kamera tidak disimpan. Perubahan wajah terdaftar memerlukan reset melalui admin.</p>
+</section>
+{% endblock %}

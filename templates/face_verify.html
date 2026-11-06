@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Verifikasi Wajah · Secure Exam Vault{% endblock %}
+{% block page %}face-verify{% endblock %}
+{% block content %}
+<section class="factor-shell">
+ <div class="factor-header"><span class="auth-kicker">TAHAP 2 DARI 3 · BIOMETRIK</span><h1>Verifikasi wajah</h1><p class="muted">Akun <strong>{{ username }}</strong> · Gunakan webcam eksternal dan pastikan hanya satu wajah terlihat.</p></div>
+ <div class="camera-card"><video id="face-video" autoplay playsinline muted></video><div class="camera-line"></div></div>
+ <div id="factor-error" class="alert alert-error hidden" role="alert"></div>
+ <div id="factor-ok" class="alert alert-ok hidden"></div>
+ <div class="factor-actions"><button class="btn" id="btn-face-verify" type="button">Verifikasi wajah →</button><a class="btn btn-secondary" href="/login">Kembali</a></div>
+ <p class="hint">Izin kamera diperlukan. Modul pengenalan wajah OpenCV ini untuk demonstrasi akademik dan belum tahan spoofing foto/video.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Kesalahan {{ code }}{% endblock %}
+{% block content %}
+<section class="card accent">
+  <h1>Kesalahan {{ code }}</h1>
+  <p>{{ message }}</p>
+  <a class="btn" href="{{ url_for('index') }}">Kembali ke beranda</a>
+</section>
+{% endblock %}

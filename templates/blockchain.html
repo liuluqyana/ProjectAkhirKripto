@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Blockchain Log{% endblock %}
+{% block page %}chain{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Blockchain Log</h1>
+  <p>Setiap rilis paket soal dicatat sebagai blok. Hash SHA-256 mengikat tiap blok ke blok sebelumnya, jadi perubahan riwayat langsung terdeteksi.</p>
+</div>
+
+<section class="card accent" id="verify-card">
+  <h2>Status integritas</h2>
+  {% set ok = verify.valid and not issues %}
+  <div id="verify-status" class="alert {{ 'alert-ok' if ok else 'alert-error' }}" role="status">
+    {% if ok %}Rantai valid: {{ verify.length }} blok terverifikasi dan berkas paket cocok dengan ledger.
+    {% else %}Integritas bermasalah.{% endif %}
+  </div>
+  <ul id="verify-errors">
+    {% for e in verify.errors %}<li>{{ e }}</li>{% endfor %}
+    {% for e in issues %}<li>{{ e }}</li>{% endfor %}
+  </ul>
+  <button id="btn-verify" class="btn btn-secondary" type="button">Verifikasi ulang</button>
+</section>
+
+<section class="chain" aria-label="Daftar blok">
+  {% for b in chain %}
+  <article class="block {{ 'release' if b.data.type == 'RELEASE' }}">
+    <header>
+      <h3>Blok #{{ b.index }} &middot; {{ 'Rilis paket' if b.data.type == 'RELEASE' else 'Genesis' }}{% if b.exam_name %} &middot; {{ b.exam_name }}{% endif %}</h3>
+      <time data-utc="{{ b.timestamp }}">{{ b.timestamp }}</time>
+    </header>
+    <div class="hash">hash: {{ b.hash }}</div>
+    <div class="hash">prev: {{ b.prev_hash }}</div>
+    <pre>{{ b.data | tojson(indent=2) }}</pre>
+  </article>
+  {% endfor %}
+</section>
+{% endblock %}

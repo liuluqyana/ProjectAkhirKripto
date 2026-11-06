@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Super Enkripsi Teks{% endblock %}
+{% block page %}text{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Super Enkripsi Teks</h1>
+  <p>Lindungi kunci jawaban dan rubrik penilaian dengan dua lapis enkripsi.</p>
+  <div class="pipeline"><span>Teks</span><i>&rarr;</i><span>Layer 1: Vigen&egrave;re (A-Z mod 26)</span><i>&rarr;</i><span>Layer 2: AES-256-GCM</span><i>&rarr;</i><span>Token SEV1</span></div>
+</div>
+
+<div class="grid grid-2">
+  <section class="card accent">
+    <h2>Enkripsi</h2>
+    <form id="form-text-encrypt">
+      <label for="enc-text">Kunci jawaban / rubrik</label>
+      <textarea id="enc-text" required maxlength="100000"></textarea>
+      <div class="row">
+        <div><label for="enc-vkey">Kunci Vigen&egrave;re (huruf A-Z)</label><input id="enc-vkey" type="text" required maxlength="64" autocomplete="off"></div>
+        <div><label for="enc-pass">Passphrase AES (min. 8 karakter)</label><input id="enc-pass" type="password" required minlength="8" autocomplete="new-password"></div>
+      </div>
+      <label for="enc-title">Simpan ke database dengan judul (opsional)</label>
+      <input id="enc-title" type="text" maxlength="120" placeholder="Contoh: Kunci UTS Kriptografi">
+      <button class="btn" type="submit">Enkripsi</button>
+    </form>
+    <div id="enc-error" class="alert alert-error hidden" role="alert"></div>
+    <div id="enc-result" class="output hidden">
+      <h3>Hasil Layer 1 (Vigen&egrave;re)</h3>
+      <textarea id="enc-layer1" class="mono" readonly></textarea>
+      <h3>Ciphertext akhir (SEV1)</h3>
+      <textarea id="enc-cipher" class="mono" readonly></textarea>
+      <button id="copy-cipher" class="btn btn-secondary btn-small" type="button">Salin ciphertext</button>
+      <p id="enc-saved" class="hint"></p>
+    </div>
+  </section>
+
+  <section class="card accent">
+    <h2>Dekripsi</h2>
+    <form id="form-text-decrypt">
+      <label for="dec-cipher">Ciphertext (SEV1.&hellip;)</label>
+      <textarea id="dec-cipher" class="mono" required maxlength="200000"></textarea>
+      <div class="row">
+        <div><label for="dec-vkey">Kunci Vigen&egrave;re</label><input id="dec-vkey" type="text" required maxlength="64" autocomplete="off"></div>
+        <div><label for="dec-pass">Passphrase AES</label><input id="dec-pass" type="password" required autocomplete="off"></div>
+      </div>
+      <button class="btn" type="submit">Dekripsi</button>
+    </form>
+    <div id="dec-error" class="alert alert-error hidden" role="alert"></div>
+    <div id="dec-result" class="output hidden">
+      <h3>Setelah AES (Layer 1)</h3>
+      <textarea id="dec-layer1" class="mono" readonly></textarea>
+      <h3>Teks asli</h3>
+      <textarea id="dec-plain" readonly></textarea>
+    </div>
+  </section>
+</div>
+
+<section class="card">
+  <h2>Kunci jawaban tersimpan</h2>
+  {% if keys %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>Judul</th><th>Disimpan</th><th></th></tr></thead>
+    <tbody>
+    {% for k in keys %}
+      <tr><td>{{ k.title }}</td><td><time data-utc="{{ k.created_at }}">{{ k.created_at }}</time></td>
+      <td><button class="btn btn-secondary btn-small js-load-key" type="button" data-key-id="{{ k.id }}">Muat ke form dekripsi</button></td></tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}<p class="empty">Belum ada kunci jawaban tersimpan. Isi judul saat enkripsi untuk menyimpannya.</p>{% endif %}
+  <p class="hint">Ciphertext disimpan ganda terenkripsi: token SEV1 yang dibungkus lagi dengan enkripsi kolom database.</p>
+</section>
+{% endblock %}

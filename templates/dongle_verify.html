@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Verifikasi Dongle · Secure Exam Vault{% endblock %}
+{% block page %}dongle{% endblock %}
+{% block content %}
+<section class="factor-shell"><div class="factor-header"><span class="auth-kicker">TAHAP 3 DARI 3 · DONGLE</span><h1>Verifikasi perangkat keamanan</h1><p class="muted">Akun <strong>{{ username }}</strong> · Lanjutkan dengan dongle virtual atau security key yang sudah terdaftar.</p></div>
+ <div class="factor-methods">
+  {% if demo_enabled %}<div class="method-card"><div class="method-icon">⌁</div><h2>Dongle USB virtual</h2><p class="muted">Pilih token dongle yang diberikan saat akun dibuat. Gunakan token dari <code>instance/demo_dongles/</code>; jangan membagikan rahasianya.</p>
+  <label for="dongle-file">File token dongle (.json)</label><input id="dongle-file" type="file" accept=".json,application/json">
+  <button class="btn" id="btn-dongle" type="button">Verifikasi dongle →</button></div>{% endif %}
+  {% if webauthn_available %}<div class="method-card"><div class="method-icon">◈</div><h2>Security key FIDO2</h2><p class="muted">Gunakan USB security key atau passkey dengan verifikasi pengguna yang terdaftar sebelumnya.</p><button class="btn btn-secondary" id="btn-webauthn" type="button">Verifikasi FIDO2</button></div>{% endif %}
+ </div><div id="factor-error" class="alert alert-error hidden" role="alert"></div>
+ <div class="factor-actions"><a class="btn btn-secondary" href="/login">Ganti akun</a></div>
+ <p class="hint">Mode dongle virtual adalah simulasi HMAC-SHA256 dan bukan bukti kepemilikan USB fisik.</p>
+</section>
+{% endblock %}

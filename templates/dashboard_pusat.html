@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Dashboard Pusat{% endblock %}
+{% block page %}dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Dashboard Pusat</h1>
+  <p>Rilis paket soal, pantau aktivitas pengawas, dan periksa integritas riwayat distribusi.</p>
+</div>
+
+<div class="stats">
+  <div class="stat"><strong>{{ packages | length }}</strong><span>Paket soal dirilis</span></div>
+  <div class="stat"><strong>{{ chain_len }}</strong><span>Blok pada ledger</span></div>
+  <div class="stat"><strong>{{ reports | length }}</strong><span>Berita acara masuk</span></div>
+  <div class="stat"><strong>{{ keys | length }}</strong><span>Kunci jawaban tersimpan</span></div>
+</div>
+
+<section class="card accent">
+  <h2>Paket soal</h2>
+  {% if packages %}
+  <div class="table-wrap"><table>
+    <thead><tr><th>ID</th><th>Ujian</th><th>Berkas asal</th><th>Dirilis</th><th>Tersedia untuk pengawas</th><th>Blok</th><th>Unduh</th></tr></thead>
+    <tbody>
+    {% for p in packages %}
+      <tr>
+        <td class="mono">{{ p.id }}</td>
+        <td>{{ p.exam_name }}</td>
+        <td>{{ p.original_name }}</td>
+        <td><time data-utc="{{ p.released_at }}">{{ p.released_at }}</time></td>
+        <td><time data-utc="{{ p.available_from }}">{{ p.available_from }}</time>
+          {% if p.available %}<span class="badge badge-ok">terbuka</span>{% else %}<span class="badge badge-wait">terjadwal</span>{% endif %}</td>
+        <td>#{{ p.block_index }}</td>
+        <td><a href="{{ url_for('package_download', pid=p.id, kind='enc') }}">.kgp</a> &middot;
+            <a href="{{ url_for('package_download', pid=p.id, kind='stego') }}">stego.png</a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}
+  <p class="empty">Belum ada paket. Buka <a href="{{ url_for('file_crypto_page') }}">Enkripsi File Soal</a> untuk merilis paket pertama.</p>
+  {% endif %}
+</section>
+
+<div class="grid grid-2">
+  <section class="card">
+    <h2>Berita acara pengawas</h2>
+    {% if reports %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Waktu</th><th>Pengawas</th><th>Ujian / ruang</th><th>Hadir</th><th>Absen</th><th>Catatan</th></tr></thead>
+      <tbody>
+      {% for r in reports %}
+        <tr>
+          <td><time data-utc="{{ r.created_at }}">{{ r.created_at }}</time></td>
+          <td>{{ r.username }}</td>
+          <td>{{ r.exam_name }}<br><span class="muted">{{ r.ruangan }}</span></td>
+          <td>{{ r.hadir }}</td><td>{{ r.tidak_hadir }}</td><td>{{ r.catatan or '-' }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<p class="empty">Belum ada berita acara yang dikirim pengawas.</p>{% endif %}
+  </section>
+
+  <section class="card">
+    <h2>Log aktivitas terbaru</h2>
+    {% if logs %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th><th>Detail</th></tr></thead>
+      <tbody>
+      {% for l in logs %}
+        <tr>
+          <td><time data-utc="{{ l.created_at }}">{{ l.created_at }}</time></td>
+          <td>{{ l.username }}</td><td>{{ l.action }}</td><td class="mono">{{ l.detail }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table></div>
+    {% else %}<p class="empty">Belum ada aktivitas.</p>{% endif %}
+  </section>
+</div>
+
+{% include "_security_card.html" %}
+{% endblock %}
