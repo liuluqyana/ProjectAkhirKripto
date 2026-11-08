@@ -56,7 +56,7 @@ TEXT_KDF_ITERATIONS = int(os.environ.get("KGP_TEXT_ITERATIONS", 300_000))  # sup
 DONGLE_MODE = os.environ.get("KGP_DONGLE_MODE", "both").lower()
 DEMO_ENABLED = DONGLE_MODE in ("demo", "both")
 WEBAUTHN_ENABLED = DONGLE_MODE in ("webauthn", "both")
-DEMO_TOKEN_DOWNLOAD = os.environ.get("KGP_DEMO_TOKEN_DOWNLOAD", "0") == "1"
+DEMO_TOKEN_DOWNLOAD = os.environ.get("KGP_DEMO_TOKEN_DOWNLOAD", "1") == "1"
 
 WEBAUTHN_RP_ID = os.environ.get("KGP_RP_ID", "localhost")
 WEBAUTHN_RP_NAME = "Secure Exam Distribution Vault"

@@ -264,6 +264,14 @@ def api_face_verify():
 
 @app.post("/api/login/password")
 def api_login_password():
+        # Flashdisk dongle fisik wajib terpasang sebelum login
+    ok_dongle, pesan, lokasi = dongle.cek(paksa=True)
+    if not ok_dongle:
+        session.clear()
+        return fail(
+            "Login ditolak. Flashdisk dongle tidak terpasang atau tidak valid.",
+            403
+        )
     data = request.get_json(silent=True) or {}
     username = str(data.get("username", "")).strip().lower()[:64]
     password = str(data.get("password", ""))[:256]
@@ -294,6 +302,15 @@ def api_login_password():
 
 
 def _finish_login(user):
+    # Periksa kembali dongle sebelum sesi login diaktifkan
+    ok_dongle, pesan, lokasi = dongle.cek(paksa=True)
+    if not ok_dongle:
+        session.clear()
+        return fail(
+            "Login dibatalkan. Flashdisk dongle dilepas atau tidak valid.",
+            403
+        )
+
     db = database.get_db()
     auth.clear_failures(db, user)
     auth.complete_login(user)

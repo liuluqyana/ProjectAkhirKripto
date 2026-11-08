@@ -4,7 +4,7 @@
 {% block content %}
 <div class="page-head">
   <h1>{{ 'Enkripsi File Soal' if current_user.role == 'pusat' else 'Dekripsi File Soal' }}</h1>
-  <p>Naskah soal PDF/DOCX dienkripsi ChaCha20-Poly1305 dalam format biner berversi <code>KGP2</code> (tetap bisa mendekripsi berkas lama KGP1/AES-GCM).</p>
+  <p>Naskah soal PDF/DOCX dienkripsi menggunakan 3DES-CBC + HMAC-SHA256 dalam format biner KGP4. Berkas lama KGP1, KGP2, dan KGP3 tetap dapat didekripsi.</p>
 </div>
 
 {% if current_user.role == 'pusat' %}
@@ -34,7 +34,7 @@
 </section>
 
 <section class="card">
-  <h2>Enkripsi manual KGP2</h2>
+  <h2>Enkripsi manual KGP4</h2>
   <form id="form-encrypt">
     <div class="row">
       <div><label for="enc-file">Naskah soal (PDF/DOCX)</label><input id="enc-file" name="file" type="file" accept=".pdf,.docx" required></div>
@@ -49,7 +49,7 @@
 
 <section class="card {{ 'accent' if current_user.role == 'pengawas' }}">
   <h2>Dekripsi paket soal</h2>
-  <p class="muted">Unggah berkas .kgp, lalu berikan token secara langsung atau unggah gambar Logo UPN agar token diekstrak otomatis.</p>
+  <p class="muted">Unggah berkas .kgp, lalu berikan token secara langsung atau unggah gambar Logo UPN agar token diekstrak otomatis. Mendukung format KGP1, KGP2, KGP3, dan KGP4.</p>
   <form id="form-decrypt">
     <label for="dec-kgp">Berkas .kgp</label>
     <input id="dec-kgp" name="kgp_file" type="file" accept=".kgp" required>
@@ -64,17 +64,19 @@
 </section>
 
 <section class="card">
-  <h2>Format berkas KGP2</h2>
+  <h2>Format berkas KGP4</h2>
   <div class="table-wrap"><table>
     <thead><tr><th>Offset</th><th>Ukuran</th><th>Isi</th></tr></thead>
     <tbody>
-      <tr><td>0</td><td>4 byte</td><td>Magic header <code>KGP2</code></td></tr>
+      <tr><td>0</td><td>4 byte</td><td>Magic header <code>KGP4</code></td></tr>
       <tr><td>4</td><td>1 byte</td><td>Versi format (1)</td></tr>
       <tr><td>5</td><td>4 byte</td><td>Iterasi PBKDF2-HMAC-SHA256 (uint32)</td></tr>
       <tr><td>9</td><td>16 byte</td><td>Salt acak</td></tr>
-      <tr><td>25</td><td>12 byte</td><td>Nonce ChaCha20-Poly1305</td></tr>
-      <tr><td>37</td><td>sisa</td><td>Ciphertext + tag 16 byte (nama berkas + isi). Header menjadi AAD.</td></tr>
+      <tr><td>25</td><td>8 byte</td><td>IV 3DES-CBC</td></tr>
+      <tr><td>33</td><td>Bervariasi</td><td>Ciphertext 3DES-CBC (nama berkas + isi)</td></tr>
+      <tr><td>Akhir berkas</td><td>32 byte</td><td>HMAC-SHA256 untuk pemeriksaan integritas header dan ciphertext</td></tr>
     </tbody>
   </table></div>
+  <p class="hint">3DES digunakan untuk demonstrasi akademik sesuai materi Kriptografi dan tidak direkomendasikan untuk sistem keamanan produksi.</p>
 </section>
 {% endblock %}
