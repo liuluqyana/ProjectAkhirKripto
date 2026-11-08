@@ -10,7 +10,7 @@
 {% if current_user.role == 'pusat' %}
 <section class="card accent">
   <h2>Rilis paket soal</h2>
-  <p class="muted">Satu langkah: enkripsi naskah dengan token acak, sembunyikan token di gambar Logo UPN (LSB), lalu catat rilis ke blockchain.</p>
+  <p class="muted">Satu langkah: enkripsi naskah dengan token acak, sembunyikan token di gambar (Logo UPN) (LSB), lalu catat rilis ke blockchain.</p>
   <form id="form-release">
     <label for="rel-name">Nama ujian</label>
     <input id="rel-name" name="exam_name" type="text" required minlength="3" maxlength="120">
@@ -19,7 +19,7 @@
     <div class="row">
       <div><label for="rel-when">Tersedia untuk pengawas mulai</label><input id="rel-when" type="datetime-local">
         <p class="hint">Kosongkan untuk langsung tersedia.</p></div>
-      <div><label for="rel-cover">Gambar sampul (opsional)</label><input id="rel-cover" name="cover" type="file" accept="image/png,image/jpeg">
+      <div><label for="rel-cover">Gambar Token </label><input id="rel-cover" name="cover" type="file" accept="image/png,image/jpeg">
         <p class="hint">Kosong = Logo UPN bawaan.</p></div>
     </div>
     <button class="btn" type="submit">Enkripsi dan rilis paket</button>
@@ -29,7 +29,7 @@
     <h3>Paket berhasil dirilis</h3>
     <dl class="kv" id="rel-kv"></dl>
     <a id="rel-dl-enc" class="btn btn-secondary btn-small" href="#">Unduh .kgp</a>
-    <a id="rel-dl-stego" class="btn btn-secondary btn-small" href="#">Unduh Logo UPN (token)</a>
+    <a id="rel-dl-stego" class="btn btn-secondary btn-small" href="#">Unduh Logo Gambar Token</a>
   </div>
 </section>
 
@@ -54,7 +54,7 @@
     <label for="dec-kgp">Berkas .kgp</label>
     <input id="dec-kgp" name="kgp_file" type="file" accept=".kgp" required>
     <div class="row">
-      <div><label for="dec-stego">Gambar Logo UPN (berisi token)</label><input id="dec-stego" name="stego_image" type="file" accept="image/png"></div>
+      <div><label for="dec-stego">Gambar Token</label><input id="dec-stego" name="stego_image" type="file" accept="image/png"></div>
       <div><label for="dec-pass">atau token / passphrase</label><input id="dec-pass" name="passphrase" type="password" autocomplete="off"></div>
     </div>
     <button class="btn" type="submit">Dekripsi dan unduh naskah</button>

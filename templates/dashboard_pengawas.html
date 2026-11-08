@@ -4,7 +4,7 @@
 {% block content %}
 <div class="page-head">
   <h1>Dashboard Pengawas</h1>
-  <p>Unduh paket soal setelah waktu rilis, ambil token dari gambar Logo UPN, lalu kirim berita acara.</p>
+  <p>Unduh paket soal setelah waktu rilis, ambil token dari token, lalu kirim berita acara.</p>
 </div>
 
 <section class="card accent">
@@ -21,14 +21,14 @@
         <td>
           {% if p.available %}
             <a class="btn btn-small" href="{{ url_for('package_download', pid=p.id, kind='enc') }}">Soal terenkripsi (.kgp)</a>
-            <a class="btn btn-small btn-secondary" href="{{ url_for('package_download', pid=p.id, kind='stego') }}">Logo UPN (token)</a>
+            <a class="btn btn-small btn-secondary" href="{{ url_for('package_download', pid=p.id, kind='stego') }}">Token</a>
           {% else %}<span class="muted">Menunggu waktu rilis</span>{% endif %}
         </td>
       </tr>
     {% endfor %}
     </tbody>
   </table></div>
-  <p class="hint">Langkah: unduh kedua berkas, lalu buka <a href="{{ url_for('file_crypto_page') }}">Dekripsi File Soal</a> dan unggah .kgp bersama gambar Logo UPN. Token diekstrak otomatis dari gambar.</p>
+  <p class="hint">Langkah: unduh kedua berkas, lalu buka <a href="{{ url_for('file_crypto_page') }}">Dekripsi File Soal</a> dan unggah .kgp bersama gambar. Token diekstrak otomatis dari gambar.</p>
   {% else %}
   <p class="empty">Belum ada paket soal yang dirilis Pusat.</p>
   {% endif %}

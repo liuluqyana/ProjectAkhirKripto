@@ -34,7 +34,7 @@ def descriptor(data_url: str):
         raise FaceError('Frame webcam tidak valid.') from exc
     if img is None or min(img.shape[:2]) < 160:
         raise FaceError('Kamera belum menghasilkan gambar yang cukup jelas.')
-    faces = CASCADE.detectMultiScale(img, scaleFactor=1.1, minNeighbors=5, minSize=(75, 75))
+    faces = CASCADE.detectMultiScale(img, scaleFactor=1.1, minNeighbors=3, minSize=(75, 75))
     if len(faces) != 1:
         raise FaceError('Pastikan tepat satu wajah tampak jelas di depan kamera.')
     x, y, w, h = faces[0]

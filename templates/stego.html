@@ -3,7 +3,7 @@
 {% block page %}stego{% endblock %}
 {% block content %}
 <div class="page-head">
-  <h1>Steganografi Logo UPN</h1>
+  <h1>Steganografi</h1>
   <p>Token dekripsi soal disembunyikan di bit paling tidak signifikan (LSB) piksel gambar, tanpa perubahan yang terlihat.</p>
 </div>
 
@@ -11,7 +11,7 @@
   <div class="row">
     <div><img class="logo-preview" src="{{ url_for('static', filename='img/Logo_UPN_Yogyakarta.png') }}" alt="Logo UPN Veteran Yogyakarta">
       <dl class="kv">
-        <dt>Gambar sampul bawaan</dt><dd>{{ logo_size }} piksel</dd>
+        <dt>Gambar bawaan</dt><dd>{{ logo_size }} piksel</dd>
         <dt>Kapasitas pesan</dt><dd>{{ capacity }} byte</dd>
         <dt>Format keluaran</dt><dd>PNG (lossless)</dd>
       </dl>

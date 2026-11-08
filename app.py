@@ -1,6 +1,7 @@
 """Secure Exam Distribution Vault - aplikasi Flask utama (semua route)."""
 import hashlib
 import io
+import os
 import re
 import secrets
 from datetime import datetime, timedelta, timezone
@@ -654,9 +655,10 @@ def api_file_encrypt():
     if not upload or not upload.filename:
         return fail("Pilih berkas PDF/DOCX.")
     name = secure_filename(upload.filename)
+    base_name, ext = os.path.splitext(name)
     blob = file_crypto.encrypt_file(upload.read(), name, passphrase)
     log("FILE_ENCRYPT", f"nama={name}")
-    return file_response(blob, f"{name}.kgp", "application/octet-stream")
+    return file_response(blob, f"{base_name}.kgp", "application/octet-stream")
 
 
 @app.post("/api/files/decrypt")
@@ -669,7 +671,7 @@ def api_file_decrypt():
     stego = request.files.get("stego_image")
     if not passphrase:
         if not (stego and stego.filename):
-            return fail("Isi token atau unggah gambar stego Logo UPN yang berisi token.")
+            return fail("Isi token atau unggah gambar stego yang berisi token.")
         passphrase = steganography.extract_message(steganography.load_image(stego.read())).decode("utf-8", "replace")
     name, data = file_crypto.decrypt_file(kgp.read(), passphrase)
     log("FILE_DECRYPT", f"nama={name}")
@@ -691,7 +693,12 @@ def package_download(pid, kind):
     if not path.is_file():
         abort(404)
     log("DOWNLOAD_PACKAGE", f"paket={pid} jenis={kind}")
-    download_name = f"paket_{pid}.kgp" if kind == "enc" else f"logo_upn_{pid}.png"
+    original_name = pkg.get("original_name", f"file_{pid}")
+    base_name, _ = os.path.splitext(original_name)
+    if kind == "enc":
+        download_name = f"{base_name}_enkrip.kgp"
+    else:
+        download_name = f"{base_name}_stego.png"
     return send_file(path, as_attachment=True, download_name=download_name)
 
 
@@ -712,7 +719,7 @@ def api_stego_embed():
         return fail("Pesan rahasia tidak boleh kosong.")
     img = steganography.embed_message(cover_image(), message.encode("utf-8"))
     log("STEGO_EMBED", f"panjang={len(message.encode('utf-8'))}")
-    return file_response(steganography.image_to_png_bytes(img), "stego_logo_upn.png", "image/png")
+    return file_response(steganography.image_to_png_bytes(img), "stego_token.png", "image/png")
 
 
 @app.post("/api/stego/extract")
