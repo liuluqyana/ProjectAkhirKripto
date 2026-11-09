@@ -4,7 +4,7 @@
 {% block content %}
 <div class="page-head">
   <h1>{{ 'Enkripsi File Soal' if current_user.role == 'pusat' else 'Dekripsi File Soal' }}</h1>
-  <p>Naskah soal PDF/DOCX dienkripsi menggunakan 3DES-CBC + HMAC-SHA256 dalam format biner KGP4. Berkas lama KGP1, KGP2, dan KGP3 tetap dapat didekripsi.</p>
+  <p>Naskah soal PDF/DOCX dienkripsi menggunakan 3DES-CBC + HMAC-SHA256 dalam format biner KGP4.</p>
 </div>
 
 {% if current_user.role == 'pusat' %}

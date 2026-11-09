@@ -1,9 +1,22 @@
+
+# Python
 __pycache__/
 *.pyc
 .vscode/
+
+# Data lokal aplikasi
 instance/
+
+# Environment dan kredensial
 .env
 .env.*
+!.env.example
+
+# Token dan file terenkripsi
 *.key
 *.dongle.json
 *.kgp
+
+# Registrasi dongle fisik lokal
+dongle.json
+instance/physical_dongles.json

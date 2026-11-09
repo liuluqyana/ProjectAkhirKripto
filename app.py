@@ -25,6 +25,19 @@ from file_crypto import FileCryptoError
 from steganography import StegoError
 
 app = Flask(__name__)
+@app.before_request
+def redirect_localhost_webauthn():
+    from flask import redirect, request
+
+    if request.host == "127.0.0.1:5000":
+        return redirect(
+            request.url.replace(
+                "http://127.0.0.1:5000",
+                "http://localhost:5000",
+                1
+            ),
+            code=307
+        )
 app.config.update(
     SECRET_KEY=config.SECRET_KEY,
     MAX_CONTENT_LENGTH=(config.MAX_UPLOAD_MB + 5) * 1024 * 1024,
